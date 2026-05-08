@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
+    "vercel-start": "node server.js",
     "dev": "nodemon server.js",
     "watch:css": "npx tailwindcss -i ./public/css/input.css -o ./public/css/tailwind.css --watch"
   },
@@ -35,3 +36,5 @@
     "tailwindcss": "^3.4.17"
   }
 }
+
+
