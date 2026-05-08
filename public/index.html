@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookMarket - Kitob Savdosi Platformasi</title>
+    <!-- Kompilyatsiya qilingan Tailwind fayli -->
+    <link rel="stylesheet" href="./css/tailwind.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<!-- Sahifa yuklanganda yashirin turadi, JS orqali token tekshirilgach ochiladi -->
+<body class="bg-darkBg font-sans text-lightText min-h-screen flex flex-col relative" style="display: none;" id="mainBody">
+
+    <!-- Navbar (Dark Mode) -->
+    <header class="bg-darkCard shadow-sm border-b border-darkBorder sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <!-- Logo -->
+            <div class="flex items-center gap-3 text-primary cursor-pointer hover:scale-105 transition-transform" onclick="window.location.href='/'">
+                <i class="fa-solid fa-book-open-reader text-3xl drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]"></i>
+                <h1 class="text-2xl font-black tracking-tight">BookMarket</h1>
+            </div>
+            
+            <!-- Umumiy Jonli Qidiruv (Live Search Bar) -->
+            <div class="hidden md:flex flex-1 max-w-xl mx-8 relative group">
+                <input type="text" id="globalSearchInput" placeholder="Kitob nomi yoki muallifni qidiring..." autocomplete="off"
+                    class="w-full bg-darkBg border border-darkBorder rounded-full py-3 px-5 pl-12 text-lightText placeholder-grayText focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all shadow-inner">
+                <i class="fa-solid fa-magnifying-glass absolute left-5 top-4 text-grayText group-focus-within:text-primary transition-colors"></i>
+            </div>
+
+            <!-- Tizimga kirgan foydalanuvchi menyusi -->
+            <div class="flex gap-3 items-center" id="headerAuthContainer">
+                <button onclick="window.location.href='/create-book.html'" class="bg-primary text-darkBg px-5 py-2.5 rounded-xl font-black shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:bg-primaryHover hover:shadow-[0_0_20px_rgba(16,185,129,0.5)] transition-all flex items-center gap-2 transform hover:-translate-y-0.5">
+                    <i class="fa-solid fa-plus text-sm"></i> <span class="hidden sm:inline">E'lon berish</span>
+                </button>
+                
+                <div class="flex items-center gap-3 cursor-pointer border border-darkBorder py-1.5 px-4 rounded-xl hover:bg-darkBg transition-colors group" onclick="window.location.href='/profile.html'">
+                    <div id="userInitial" class="w-9 h-9 bg-primary/10 border border-primary/30 text-primary rounded-full flex items-center justify-center font-black text-sm shadow-[0_0_10px_rgba(16,185,129,0.2)] group-hover:bg-primary/20 transition-colors">
+                        U
+                    </div>
+                    <span id="userName" class="font-bold text-lightText hidden sm:block group-hover:text-primary transition-colors">Foydalanuvchi</span>
+                </div>
+                
+                <button id="logoutBtn" class="text-red-500 hover:text-red-400 bg-red-500/10 hover:bg-red-500/20 p-2.5 rounded-xl transition-colors ml-1" title="Tizimdan chiqish">
+                    <i class="fa-solid fa-right-from-bracket text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Asosiy Qism -->
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-7xl">
+        
+        <!-- Maxsus 3 toifali filtrlash qismi (DROPDOWN XATOSI TO'G'IRLANGAN) -->
+        <!-- DIQQAT: Bu yerdan overflow-hidden olib tashlandi, shunda ro'yxat erkin pastga tushadi -->
+        <section class="bg-darkCard rounded-3xl shadow-xl border border-darkBorder p-6 sm:p-8 mb-12 relative z-20">
+            <!-- Orqa fondagi effekt -->
+            <div class="absolute -right-20 -top-20 w-64 h-64 bg-primary opacity-5 rounded-full blur-3xl pointer-events-none -z-10"></div>
+
+            <h2 class="text-xl font-black mb-6 text-lightText flex items-center gap-2 border-b border-darkBorder pb-4">
+                <i class="fa-solid fa-filter text-primary"></i> Kengaytirilgan Qidiruv
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-5 items-end">
+                <!-- Janr -->
+                <div class="flex flex-col relative z-30">
+                    <label for="genreSelect" class="text-xs font-bold text-grayText mb-2 uppercase tracking-wider">Janr</label>
+                    <select id="genreSelect" class="bg-darkBg border border-darkBorder text-lightText text-sm rounded-xl focus:ring-primary focus:border-primary block w-full p-3.5 outline-none transition-colors shadow-inner cursor-pointer appearance-none">
+                        <option value="">Barcha janrlar</option>
+                    </select>
+                    <i class="fa-solid fa-chevron-down absolute right-4 bottom-4 text-grayText pointer-events-none text-sm"></i>
+                </div>
+
+                <!-- Yozuvchi -->
+                <div class="flex flex-col relative z-40">
+                    <label for="authorInput" class="text-xs font-bold text-grayText mb-2 uppercase tracking-wider">Yozuvchi</label>
+                    <input type="text" id="authorInput" placeholder="Masalan: Pirimqul..." autocomplete="off"
+                        class="bg-darkBg border border-darkBorder text-lightText text-sm rounded-xl focus:ring-primary focus:border-primary block w-full p-3.5 outline-none transition-colors shadow-inner">
+                    <!-- JS tomonidan Dropdown shu yerda chiziladi -->
+                    <div id="authorSuggestions" class="absolute top-full left-0 right-0 hidden mt-2"></div>
+                </div>
+
+                <!-- Kitob nomi -->
+                <div class="flex flex-col relative z-40">
+                    <label for="titleInput" class="text-xs font-bold text-grayText mb-2 uppercase tracking-wider">Kitob nomi</label>
+                    <input type="text" id="titleInput" placeholder="Masalan: Yulduzli tunlar..." autocomplete="off"
+                        class="bg-darkBg border border-darkBorder text-lightText text-sm rounded-xl focus:ring-primary focus:border-primary block w-full p-3.5 outline-none transition-colors shadow-inner">
+                    <!-- JS tomonidan Dropdown shu yerda chiziladi -->
+                    <div id="titleSuggestions" class="absolute top-full left-0 right-0 hidden mt-2"></div>
+                </div>
+
+                <!-- Qidirish tugmasi -->
+                <div class="relative z-30">
+                    <button id="filterSearchBtn" class="w-full bg-primary text-darkBg font-black rounded-xl px-5 py-3.5 text-center shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:bg-primaryHover hover:shadow-[0_0_20px_rgba(16,185,129,0.5)] transition-all flex justify-center items-center gap-2 transform hover:-translate-y-1">
+                        <i class="fa-solid fa-search"></i> Qidirish
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Kitoblar Kartochkalari -->
+        <section class="relative z-10">
+            <div class="flex flex-wrap justify-between items-end mb-8 border-b border-darkBorder pb-4 gap-4">
+                <h2 class="text-2xl sm:text-3xl font-black text-lightText">So'nggi e'lonlar</h2>
+                <span class="text-sm font-bold text-primary bg-primary/10 px-4 py-1.5 rounded-lg border border-primary/20 shadow-inner" id="resultsCount">
+                    Yuklanmoqda...
+                </span>
+            </div>
+            
+            <!-- JS shu yerga qora dizayndagi kartalarni chizib tashlaydi -->
+            <div id="booksContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+        </section>
+        
+    </main>
+
+    
+
+    <!-- Asosiy mantiqiy JS fayli -->
+    <script src="./js/main.js"></script>
+</body>
+</html>

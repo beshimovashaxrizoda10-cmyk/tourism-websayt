@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sotuvchi Do'koni - BookMarket</title>
+    <link rel="stylesheet" href="./css/tailwind.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-darkBg font-sans text-lightText min-h-screen flex flex-col">
+    <!-- Navbar (Dark Mode) -->
+    <header class="bg-darkCard shadow-sm border-b border-darkBorder sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <button onclick="window.history.back()" class="flex items-center gap-2 text-grayText hover:text-primary transition-colors">
+                <i class="fa-solid fa-arrow-left text-xl"></i> <span class="font-bold">Orqaga</span>
+            </button>
+            <div class="flex items-center gap-2 text-primary cursor-pointer" onclick="window.location.href='/'">
+                <i class="fa-solid fa-book-open-reader text-2xl"></i>
+                <h1 class="text-xl font-black">BookMarket</h1>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow container mx-auto px-4 py-8">
+        <!-- Sotuvchi Shapkasi (Loader bilan) -->
+        <div id="sellerHeader" class="bg-darkCard rounded-2xl shadow-xl border border-darkBorder p-8 mb-8 flex items-center justify-center min-h-[200px]">
+             <i class="fa-solid fa-spinner fa-spin text-4xl text-primary"></i>
+        </div>
+
+        <!-- Sotuvchi Kitoblari qismi -->
+        <h2 class="text-2xl font-black text-lightText mb-6 border-b border-darkBorder pb-3">Do'kondagi barcha e'lonlar</h2>
+        <div id="sellerBooksContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+    </main>
+
+    
+    <script src="./js/seller.js"></script>
+</body>
+</html>
